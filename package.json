@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/charlesmartinreed/notice-me-senpai/issues"
   },
-  "homepage": "https://github.com/charlesmartinreed/notice-me-senpai#readme"
+  "homepage": "https://github.com/charlesmartinreed/notice-me-senpai#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.1"
+  }
 }

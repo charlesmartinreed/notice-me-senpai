@@ -6,7 +6,7 @@ const users = {};
 
 io.on("connection", socket => {
   // when a user connects, we emit the 'chat message' and pass along the data payload we want to send down to the client
-  socket.on("new-user", username => {
+  socket.on("user-joined", username => {
     users[socket.id] = username;
     socket.broadcast.emit("user-connected", username);
   });
@@ -18,5 +18,11 @@ io.on("connection", socket => {
       message: message,
       username: users[socket.id]
     });
+  });
+
+  //   user disconnects
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("user-disconnected", users[socket.id]);
+    delete users[socket.id];
   });
 });

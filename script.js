@@ -10,6 +10,7 @@ const messageInput = document.getElementById("message-input");
 const username = prompt("Please choose a username") || generateUsername();
 console.log(username, typeof username);
 
+// USERNAME GENERATOR
 function generateUsername() {
   let adjectives = [
     "Timid",
@@ -50,14 +51,19 @@ function generateUsername() {
 }
 
 appendMessage("You joined the room");
-socket.emit("new-user", username);
+socket.emit("user-joined", username);
 
+// EMIT EVENTS
 socket.on("chat-message", data => {
   appendMessage(`${data.username}: ${data.message}`);
 });
 
 socket.on("user-connected", data => {
   appendMessage(`${data} joined the room`);
+});
+
+socket.on("user-disconnected", username => {
+  appendMessage(`${username} left the room`);
 });
 
 messageForm.addEventListener("submit", e => {

@@ -6,8 +6,17 @@ const messageContainer = document.getElementById("message-container");
 const messageForm = document.getElementById("send-container");
 const messageInput = document.getElementById("message-input");
 
+// BASIC USER SETUP - flesh this out later
+const username = prompt("Please choose a username");
+appendMessage("You joined the room");
+socket.emit("new-user", username);
+
 socket.on("chat-message", data => {
-  appendMessage(data);
+  appendMessage(`${data.username}: ${data.message}`);
+});
+
+socket.on("user-connected", data => {
+  appendMessage(`${data} joined the room`);
 });
 
 messageForm.addEventListener("submit", e => {
@@ -24,8 +33,8 @@ messageForm.addEventListener("submit", e => {
   messageInput.value = "";
 });
 
-const appendMessage = msg => {
+function appendMessage(msg) {
   const messageElement = document.createElement("div");
   messageElement.textContent = msg;
   messageContainer.appendChild(messageElement);
-};
+}

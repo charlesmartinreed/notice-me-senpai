@@ -6,9 +6,11 @@ const messageContainer = document.getElementById("message-container");
 const messageForm = document.getElementById("send-container");
 const messageInput = document.getElementById("message-input");
 
+const userList = document.getElementById("user-list-container");
+let activeUsers = new Set([]);
+
 // BASIC USER SETUP - flesh this out later
-const username = prompt("Please choose a username") || generateUsername();
-console.log(username, typeof username);
+const clientUsername = prompt("Please choose a username") || generateUsername();
 
 // USERNAME GENERATOR
 function generateUsername() {
@@ -51,19 +53,28 @@ function generateUsername() {
 }
 
 appendMessage("You joined the room");
-socket.emit("user-joined", username);
+activeUsers.add(clientUsername);
+addUserToRoomList();
+
+socket.emit("user-joined", clientUsername);
 
 // EMIT EVENTS
 socket.on("chat-message", data => {
   appendMessage(`${data.username}: ${data.message}`);
 });
 
-socket.on("user-connected", data => {
-  appendMessage(`${data} joined the room`);
+socket.on("user-connected", username => {
+  appendMessage(`${username} joined the room`);
+  activeUsers.add(`${username}`);
+
+  addUserToRoomList();
 });
 
-socket.on("user-disconnected", username => {
-  appendMessage(`${username} left the room`);
+socket.on("user-disconnected", name => {
+  appendMessage(`${name} left the room`);
+  activeUsers.delete(`${name}`);
+
+  addUserToRoomList();
 });
 
 messageForm.addEventListener("submit", e => {
@@ -86,4 +97,17 @@ function appendMessage(msg) {
   const messageElement = document.createElement("div");
   messageElement.textContent = msg;
   messageContainer.appendChild(messageElement);
+}
+
+function addUserToRoomList() {
+  userList.innerHTML = "";
+
+  for (let name of activeUsers) {
+    let userElement = document.createElement("div");
+    userElement.textContent = name;
+
+    userList.appendChild(userElement);
+  }
+
+  //   userList.appendChild(userElement);
 }

@@ -2,12 +2,13 @@
 const io = require("socket.io")(4000);
 
 // key of object is the socket id
-const users = {};
+let users = {};
 
 io.on("connection", socket => {
   // when a user connects, we emit the 'chat message' and pass along the data payload we want to send down to the client
   socket.on("user-joined", username => {
     users[socket.id] = username;
+
     socket.broadcast.emit("user-connected", username);
   });
 
